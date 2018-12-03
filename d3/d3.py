@@ -8,13 +8,16 @@ def count_overlap(data):
     overlap = set()
     for item in data:
         before_size = len(fabric)
-        id, x, y, w, h = get_item_data(item)
-        claim = product(range(x, x+w), range(y, y+h))
+        claim = get_claim(item)
         for pos in claim:
             if pos in fabric:
                 overlap.add(pos)
             fabric.add(pos)
     return len(overlap)
+
+def get_claim(item):
+    id, x, y, w, h = get_item_data(item)
+    return set(product(range(x, x+w), range(y, y+h)))
 
 def get_item_data(item):
     parts = item.split(' ')
@@ -29,11 +32,10 @@ def find_unique_claim(data):
         for item2 in data:
             if item == item2:
                 continue
-            id, x, y, w, h = get_item_data(item2)
-            claim = set(product(range(x, x+w), range(y, y+h)))
+            claim = get_claim(item2)
             fabric.update(claim)
         id, x, y, w, h = get_item_data(item)
-        claim = set(product(range(x, x+w), range(y, y+h)))
+        claim = get_claim(item)
         if all(pos not in fabric for pos in claim):
             return id
 
