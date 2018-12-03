@@ -27,17 +27,11 @@ def get_item_data(item):
     return (id, x, y, w, h)
 
 def find_unique_claim(data):
+    d = {}
     for item in data:
-        fabric = set()
-        for item2 in data:
-            if item == item2:
-                continue
-            claim = get_claim(item2)
-            fabric.update(claim)
         id, x, y, w, h = get_item_data(item)
         claim = get_claim(item)
-        if all(pos not in fabric for pos in claim):
-            return id
+        d[id] = claim
 
 test_data = """#1 @ 1,3: 4x4
 #2 @ 3,1: 4x4
