@@ -1,11 +1,12 @@
 from itertools import product
+import operator
 
 test_data = {
-    'aA': 0,
-    'abBA': 0,
-    'abAB': 4,
-    'aabAAB': 6,
-    'dabAcCaCBAcCcaDA': 10,
+    'aA': (0, 0),
+    'abBA': (0, 0),
+    'abAB': (4, 0),
+    'aabAAB': (6, 0),
+    'dabAcCaCBAcCcaDA': (10, 4),
 }
 
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
@@ -19,10 +20,17 @@ def replace(s):
             s = s.replace(rep, '')
     return len(s)
 
+def find_best_replacement(s):
+    return min(
+        replace(s.replace(ch, '').replace(ch.upper(), '')) for ch in alphabet
+    )
+
 for s, n in test_data.items():
-    assert replace(s) == n, (s, n)
+    assert replace(s) == n[0], (s, n[0])
+    assert find_best_replacement(s) == n[1], (s, n[1])
 
 with open('input') as inp:
     data = inp.read().strip()
 
 print(replace(data))
+print(find_best_replacement(data))
