@@ -38,15 +38,18 @@ class Map:
             s += '\n'
         return s[:-1]
 
-    def construct_map(self):
+    @property
+    def size(self):
         coords = self.locations.values()
         max_x = max(coords, key=operator.itemgetter(0))[0]
         max_y = max(coords, key=operator.itemgetter(1))[1]
-        max_xy = max(max_x, max_y) + 1
+        return max(max_x, max_y) + 1
 
-        self.map = np.zeros((max_xy, max_xy), str)
-        for x in range(max_xy):
-            for y in range(max_xy):
+    def construct_map(self):
+        size = self.size
+        self.map = np.zeros((size, size), dtype=str)
+        for x in range(size):
+            for y in range(size):
                 self.map[y, x] = self.find_closest_location(x, y)
 
     def find_closest_location(self, x, y):
@@ -81,11 +84,30 @@ class Map:
     def largest_finite_area(self):
         return max(self.finite_areas.items(), key=operator.itemgetter(1))[1]
 
+    def size_of_central_region(self, n):
+        def calculate_distance(p1, p2):
+            x1, y1 = p1
+            x2, y2 = p2
+            return (abs(x1-x2) + abs(y1-y2))
+
+        def sum_distances(p1, p2s):
+            return sum(calculate_distance(p1, p2) for p2 in p2s)
+
+        size = self.size
+        c = 0
+        for x in range(size):
+            for y in range(size):
+                b = sum_distances((x, y), self.locations.values())
+                if b < n:
+                    c += 1
+        return c
+
 map = Map(test_locations, case=True)
 assert str(map) == test_output
 assert map.finite_locations == ['D', 'E']
 assert map.finite_areas == {'D': 9, 'E': 17}
 assert map.largest_finite_area == 17
+assert map.size_of_central_region(32) == 16
 
 with open('input') as inp:
     data = [line.strip().split(', ') for line in inp.readlines()]
@@ -95,3 +117,4 @@ with open('input') as inp:
 
 map = Map(locations)
 print(map.largest_finite_area)
+print(map.size_of_central_region(10000))
