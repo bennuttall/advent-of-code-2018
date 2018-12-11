@@ -1,5 +1,8 @@
 from itertools import cycle
 
+with open('input') as inp:
+    data = [int(s.strip()) for s in inp.readlines()]
+
 def calculate(data):
     f = 0
     fs = set([f])
@@ -15,6 +18,14 @@ def test(data, expected):
     assert actual == expected, actual
 
 # tests
+d = [1, 1, 1]
+assert sum(d) == 3
+d = [1, 1, -2]
+assert sum(d) == 0
+d = [-1, -2, -3]
+assert sum(d) == -6
+
+# tests
 d = [1, -1]
 test(d, 0)
 d = [3, 3, 4, -2, -4]
@@ -24,7 +35,5 @@ test(d, 5)
 d = [7, 7, -2, -7, -4]
 test(d, 14)
 
-if __name__ == '__main__':
-    from d1p1 import data
-
-    print(calculate(data))
+print(sum(data))
+print(calculate(data))
