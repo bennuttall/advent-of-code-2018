@@ -3,7 +3,6 @@ from collections import namedtuple
 import numpy as np
 import matplotlib.pyplot as plt
 from time import sleep
-from matplotlib.animation import FuncAnimation
 
 
 Position = namedtuple('Position', ['x', 'y'])
@@ -28,8 +27,6 @@ class Points:
         max_x = max(self.positions, key=itemgetter(0))[0] + 1
         max_y = max(self.positions, key=itemgetter(1))[1] + 1
         self.xy_range = (min_x, min_y, max_x, max_y)
-        self.fig, self.ax = plt.subplots()
-        self.ln = plt.plot(self.positions, 'bs', animated=True)
 
     def __next__(self):
         for i, v in enumerate(self.velocities):
@@ -55,9 +52,7 @@ class Points:
         return Velocity(int(v[0]), int(v[1]))
 
     def draw(self):
-        def update(frame):
-            self.ln.set_data(self.positions)
-        ani = FuncAnimation(self.fig, update, blit=True)
+        plt.scatter([p.x for p in self.positions], [p.y for p in self.positions])
         plt.show()
 
 test_outputs = [
@@ -167,9 +162,18 @@ def test(data, outputs):
 
 test(test_data, test_outputs)
 
+data = Points('test_input')
+
+data.draw()
+for i in range(4):
+    next(data)
+    data.draw()
+
 data = Points('input')
 
+data.draw()
+
 while True:
-    data.draw()
-    for i in range(1000):
+    for i in range(10000):
         next(data)
+    data.draw()
